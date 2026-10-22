@@ -1,18 +1,18 @@
-# IoT Mini Project Report: Smart Plant Monitoring & Precision Irrigation System
+# Engineering Project Report: Smart Plant Monitoring & Precision Irrigation System
 
-**Course:** Internet of Things (IoT) Mini Project  
-**Component:** Part B: IoT Mini Project Development (10 Marks)  
+**Course:** Internet of Things (IoT) Project  
+**System Target:** NodeMCU ESP8266 & ESP32 Platforms  
 **Academic Year:** 2026 – 2027  
 
 ---
 
-## Evaluation Rubric Alignment Matrix
+## Executive Project Summary
 
-| Rubric Criteria | Allocated Marks | How This Project Satisfies The Requirement |
-| :--- | :---: | :--- |
-| **Project Idea & Innovation** | **2 Marks** | Addresses agriculture and urban water conservation using closed-loop automation, crop-specific hydration presets, multi-sensor environmental telemetry (soil moisture, temperature, humidity, reservoir depth), and a dynamic Plant Health Index (PHI) scoring model. |
-| **Technical Implementation** | **5 Marks** | Complete dual-target firmware (**NodeMCU ESP8266** and **ESP32**), Wokwi browser simulation architecture (`diagram.json`, `wokwi.toml`), I2C SSD1306 OLED visual feedback, non-blocking asynchronous state loops (`millis()`), relay hysteresis logic, and hardware safety cutoffs. |
-| **Team Collaboration & Documentation** | **3 Marks** | Detailed project write-up with 3-tier architecture, circuit pinout charts, algorithm state machines, comprehensive technical architecture FAQ, and an explicit **Team Contribution Matrix** demonstrating equal work distribution. |
+| Core Pillar | Technical Implementation & Architectural Highlights |
+| :--- | :--- |
+| **System Purpose & Innovation** | Autonomous plant hydration and environmental telemetry using closed-loop automation, dynamic Plant Health Index (PHI), multi-sensor sensing (soil moisture, temperature, humidity, reservoir depth), and adaptive crop-specific profiles. |
+| **Hardware & Firmware Architecture** | Dual-platform firmware (**NodeMCU ESP8266** and **ESP32**), Wokwi browser simulation layout, I2C SSD1306 OLED local readout, non-blocking asynchronous timing loops (`millis()`), dual-threshold hysteresis relay control, and dry-run safety cutoffs. |
+| **System Interfacing & Documentation** | 3-tier IoT architecture (Perception, Processing, Application), circuit wiring schematics, mathematical models for hysteresis & PHI, and an interactive web telemetry dashboard. |
 
 ---
 

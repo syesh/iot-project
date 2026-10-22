@@ -1,86 +1,96 @@
-# Smart Plant Monitoring & Precision Irrigation System (IoT Mini Project)
+# Smart Plant Monitoring & Precision Irrigation System
 
-[![IoT](https://img.shields.io/badge/IoT-ESP8266%20%7C%20ESP32-blue.svg)](https://espressif.com)
-[![Simulation](https://img.shields.io/badge/Simulation-Wokwi%20%2B%20HTML5-success.svg)](https://wokwi.com)
-[![Course](https://img.shields.io/badge/Rubric-Part%20B%20(10%20Marks)-orange.svg)](#rubric-coverage)
-
-An autonomous Internet of Things (IoT) precision plant monitoring and closed-loop irrigation system. Designed for both **NodeMCU ESP8266** and **ESP32** platforms, complete with multi-sensor telemetry, dual-threshold hysteresis control, hardware safety lockouts, online Wokwi circuit simulation, and a web telemetry dashboard.
+An autonomous Internet of Things (IoT) precision plant monitoring and closed-loop irrigation system. Designed for **ESP32** and **NodeMCU ESP8266** platforms, featuring multi-sensor environmental telemetry, intelligent hysteresis-based watering, hardware safety protections, and an interactive web interface.
 
 ---
 
-## 🎯 Evaluation Rubric Alignment (10 Marks Total)
+## 📌 Project Overview
 
-| Evaluation Parameter | Marks | Project Implementation Details |
-| :--- | :---: | :--- |
-| **1. Project Idea & Innovation** | **2 Marks** | Addresses domestic and agricultural water wastage with intelligent closed-loop automation, dynamic **Plant Health Index (PHI)**, multi-parameter environmental sensing (Moisture, Temp, Humidity, Tank level), and customizable **Crop Presets** (Succulent, Houseplant, Tomato, Fern). |
-| **2. Technical Implementation** | **5 Marks** | Full Arduino C++ firmware for **NodeMCU ESP8266** (`firmware/smart_plant_nodemcu.ino`) and **ESP32** (`firmware/smart_plant_esp32.ino`), verified **Wokwi** simulation (`diagram.json`, `wokwi.toml`), I2C SSD1306 OLED display driver, relay flyback protection design, non-blocking asynchronous timers (`millis()`), and dry-run safety lockouts. |
-| **3. Team Collaboration & Documentation** | **3 Marks** | Complete academic report (`docs/PROJECT_REPORT.md`) featuring a dedicated **Team Contribution Matrix**, circuit schematics (`docs/CIRCUIT_DIAGRAM.md`), mathematical formulations, and a technical FAQ guide (`docs/TECHNICAL_FAQ.md`). |
+Traditional plant watering relies on manual estimation or static timers. Manual watering leads to human error (under-watering or root rot from over-watering), while timer-based systems waste significant water by running even when the soil is already saturated.
+
+This project implements an **autonomous closed-loop IoT irrigation system** that:
+1. Continuously monitors soil moisture, ambient temperature, relative humidity, and water reservoir levels.
+2. Automatically triggers water delivery only when substrate moisture falls below calibrated thresholds.
+3. Incorporates **dual-threshold hysteresis control** to eliminate relay chattering and mechanical wear.
+4. Includes **dry-run safety protection** to prevent motor burnout if the water tank is depleted.
+5. Provides an interactive live web dashboard and dedicated hardware workbench for real-time monitoring and control.
 
 ---
 
-## 📁 Repository Directory Structure
+## ✨ Key System Features
+
+- **Automated Precision Irrigation:** Uses dual-threshold hysteresis (`ON < 30%`, `OFF ≥ 65%`) to maintain optimal soil moisture without rapid on/off switching.
+- **Corrosion-Free Capacitive Sensing:** Utilizes a capacitive soil moisture sensor with insulated solder-mask traces rather than resistive probes, preventing copper electrolysis in wet soil.
+- **Local & Remote Telemetry Readouts:** 
+  - **Local:** Real-time 0.96" I2C OLED display (SSD1306) mounted on the device.
+  - **Remote:** Clean, mobile-responsive web dashboard with live status indicators.
+- **Hardware Dry-Run & Timeout Protection:**
+  - Water reservoir float switch inhibits pump operation when the tank is empty.
+  - Software watchdog limits continuous pumping to a maximum of 15 seconds to prevent overflow.
+- **Dynamic Plant Health Index (PHI):** Algorithmic multi-factor health score (0–100%) calculated from moisture, temperature, and humidity conditions.
+
+---
+
+## 📁 Repository Structure
 
 ```
 iot-project/
-├── index.html                   # Clean, Simple Live Demo & Telemetry Dashboard
-├── hardware.html                # Dedicated Hardware & Circuit Workbench
-├── README.md                    # Main Project Guide & Submission Documentation
-├── README.txt                   # Original quick reference text file
+├── index.html                   # Live Telemetry & Simulation Demo Dashboard
+├── hardware.html                # Interactive Hardware & Circuit Workbench
+├── README.md                    # Main Project Documentation
+├── README.txt                   # Quickstart Text Reference
 ├── firmware/
-│   ├── smart_plant_nodemcu.ino  # NodeMCU ESP8266 Arduino Sketch
-│   ├── smart_plant_esp32.ino    # ESP32 Arduino Sketch (with OLED & DHT22)
-│   ├── diagram.json             # Wokwi simulation circuit layout & wiring
-│   └── wokwi.toml               # Wokwi configuration file
+│   ├── smart_plant_esp32.ino    # ESP32 C++ Arduino Sketch (OLED + DHT22 + Relay)
+│   ├── smart_plant_nodemcu.ino  # NodeMCU ESP8266 C++ Arduino Sketch
+│   ├── diagram.json             # Wokwi simulation circuit configuration
+│   └── wokwi.toml               # Wokwi project config file
 └── docs/
-    ├── PROJECT_REPORT.md        # University-Grade Project Report (Rubric Aligned)
-    ├── TECHNICAL_FAQ.md         # 10 Technical & Architectural Q&As
-    └── CIRCUIT_DIAGRAM.md       # Pinout tables, electrical schematics, and BOM
+    ├── PROJECT_REPORT.md        # Comprehensive Engineering Project Report
+    ├── TECHNICAL_FAQ.md         # Technical Architecture & Design FAQ
+    └── CIRCUIT_DIAGRAM.md       # Pinout tables, wiring schematics & Bill of Materials
 ```
 
 ---
 
-## 🚀 How to Run & Demonstrate (No Hardware Required)
+## 🚀 How to Run the Project
 
-### 1. Simple Web Demo & Dashboard
-1. Open [`index.html`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/index.html) in any browser.
-2. Click **`▶ Run 1-Click Automated Demo Cycle`** to show the complete self-watering cycle smoothly.
-3. Switch over to [`hardware.html`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/hardware.html) using the top navigation pill to show the virtual ESP32 board, OLED screen, clicking relay module, and UART serial console.
-2. **Key Interactive Features to Demonstrate:**
-   - **Auto Demo Mode:** Click `▶ Run Auto Demo` in the top right. Watch the system simulate soil drying, automatically trip the relay when falling below the dry threshold, show water spray animation, refill moisture, and automatically turn off at target saturation.
-   - **Crop Presets:** Switch between *Desert Succulent*, *Houseplant*, *Vegetable*, and *Tropical Fern* to show how hysteresis thresholds dynamically adapt per crop.
-   - **Dry-Run Safety Lockout:** Click `🪣 Tank: Full (OK)` to toggle the tank to *EMPTY*. Notice the pump immediately locks out with an alert sound, preventing motor burnout.
-   - **Real-Time Rolling Chart:** Watch the live canvas chart plot real-time soil moisture and ambient temperature trends.
-   - **Hardware & Code Inspector:** Click `⚡ Hardware & Code` in the top bar to display the circuit pinouts and copy the microcontroller code.
+### 1. Live Web Dashboard (`index.html`)
+1. Open [`index.html`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/index.html) in any modern web browser (Chrome, Edge, Safari, Firefox).
+2. **Interactive Demo:**
+   - Click **`▶ Run 1-Click Automated Demo Cycle`** to demonstrate a full automated cycle (soil drying down, relay triggering, water delivery, and automated cutoff at target saturation).
+   - Click **`🌵 Simulate Dry Soil`** or **`🌧️ Add Water`** to test individual threshold events.
+   - Click **`🪣 Reservoir: Full / Empty`** to demonstrate the dry-run safety lockout.
 
-### 2. Microcontroller Simulation via Wokwi
-1. Open [Wokwi.com](https://wokwi.com) in your browser and choose **ESP32**.
-2. Copy the code from [`firmware/smart_plant_esp32.ino`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/firmware/smart_plant_esp32.ino) into `sketch.ino`.
-3. In Wokwi's `diagram.json` tab, paste the contents of [`firmware/diagram.json`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/firmware/diagram.json).
-4. Click **Play**:
-   - The SSD1306 OLED displays live telemetry.
-   - Rotate the **Soil Moisture potentiometer** to test automatic relay switching.
-   - Slide DHT22 temperature/humidity sliders to see real-time updates.
-   - Press the **Tank Float Switch** to test the dry-run buzzer alarm.
+### 2. Hardware & Circuit Workbench (`hardware.html`)
+1. Open [`hardware.html`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/hardware.html) via the top navigation bar.
+2. Inspect the virtual ESP32 board, live OLED screen mirroring, and optocoupler relay module.
+3. Click **`⚡ Test Relay Click`** to test the mechanical switching and audible feedback.
+4. Use the **Live UART Serial Console** (115200 baud) to inspect raw sensor data and send serial commands (`D`, `W`, `P`).
+
+### 3. Wokwi Browser Simulation (Optional)
+1. Visit [Wokwi.com](https://wokwi.com) and start a new **ESP32** project.
+2. Copy [`firmware/smart_plant_esp32.ino`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/firmware/smart_plant_esp32.ino) into `sketch.ino`.
+3. Paste [`firmware/diagram.json`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/firmware/diagram.json) into the `diagram.json` tab.
+4. Click **Play** to run the virtual ESP32 with OLED, DHT22, potentiometer, and relay.
 
 ---
 
-## ⚡ Hardware Pinout Summary
+## 🔌 Hardware Wiring & Pin Configuration
 
-| Peripheral | NodeMCU ESP8266 Pin | ESP32 Pin | Description |
-| :--- | :--- | :--- | :--- |
-| **Soil Moisture Sensor** | `A0` (Analog ADC) | `GPIO 34` | Substrate dielectric measurement |
-| **5V Relay Module (Pump)** | `D1` (GPIO 5) | `GPIO 23` | Active LOW switching for water pump |
-| **DHT22 Climate Sensor** | `D2` (GPIO 4) | `GPIO 15` | Digital Temperature & Humidity |
-| **Water Reservoir Float** | `D6` (GPIO 12) | `GPIO 19` | Internal pull-up safety float switch |
-| **SSD1306 OLED Display** | `D1` (SCL) / `D2` (SDA) | `GPIO 22` / `GPIO 21` | I2C Telemetry Display (0x3C) |
-| **Piezo Buzzer** | `D8` (GPIO 15) | `GPIO 18` | Acoustic alert indicator |
+| Component | ESP32 Pin | NodeMCU Pin | Signal Type | Function |
+| :--- | :--- | :--- | :--- | :--- |
+| **Capacitive Soil Sensor** | `GPIO 34` | `A0 (ADC0)` | Analog Input | Measures soil moisture voltage (0–3.3V) |
+| **5V Relay Module (Pump)** | `GPIO 23` | `D1 (GPIO 5)` | Digital Output | Active-LOW power drive for DC pump |
+| **DHT22 Climate Sensor** | `GPIO 15` | `D2 (GPIO 4)` | Digital 1-Wire | Reads ambient temperature & humidity |
+| **SSD1306 OLED (0.96")** | `GPIO 21` / `22` | `D2` / `D1` | I2C (SDA/SCL) | Local real-time telemetry display |
+| **Reservoir Float Switch** | `GPIO 19` | `D6 (GPIO 12)` | Digital Input | Internal pull-up dry-run safety cutoff |
+| **Status Indicator LEDs** | `GPIO 4` / `2` | `D7` / `D8` | Digital Output | Visual status & Wi-Fi connection indicator |
 
 ---
 
-## 👥 Team Members & Contribution
+## 👥 Project Team & Contributions
 
-Please fill in your names and USNs in [`docs/PROJECT_REPORT.md`](file:///Users/swasthik/Developer/01%20Projects/College/iot-project/iot-project/docs/PROJECT_REPORT.md):
-- **Member 1:** Firmware logic, hysteresis algorithm, safety timers (`firmware/*.ino`)
-- **Member 2:** Circuit schematics, BOM, and Wokwi simulation configuration (`diagram.json`)
-- **Member 3:** IoT telemetry dashboard UI, HTML5 canvas charts, and crop engine (`index.html`)
-- **Member 4:** Project report compilation, test validation, and technical documentation (`docs/*.md`)
+- **Team Member 1:** Embedded Firmware, Hysteresis Irrigation Logic & ADC Calibration
+- **Team Member 2:** Circuit Schematics, Electrical Protection & Wokwi Simulation
+- **Team Member 3:** Front-End Web Dashboard, Telemetry Visualization & Event Handling
+- **Team Member 4:** System Architecture Documentation, Edge-Case Testing & Project Report
