@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Plant IoT Dashboard</title>
+<style>
+:root{--navy:#14233b;--blue:#2864dc;--bg:#f3f6fb;--green:#16845b;--orange:#e88a2d;--muted:#68758a;--border:#e2e8f0}
+*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#17243a}
+header{background:linear-gradient(120deg,#14233b,#244b7a);color:white;padding:26px 5vw}
+header .eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#b9d0f4}
+header h1{margin:9px 0;font-size:clamp(24px,4vw,36px)}header p{margin:0;color:#dce7f7;max-width:760px;line-height:1.5}
+main{max-width:1100px;margin:26px auto;padding:0 18px 40px}
+.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.pill{display:inline-flex;align-items:center;gap:7px;background:#e5f7ee;color:#116a49;padding:8px 12px;border-radius:20px;font-size:13px;font-weight:bold}
+.dot{width:8px;height:8px;background:#1baf72;border-radius:50%}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+.card{background:white;border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 5px 20px #19365b0a}
+.metric-label{font-size:13px;color:var(--muted);margin-bottom:10px}.metric{font-size:32px;font-weight:750;letter-spacing:-1px}.unit{font-size:15px;color:var(--muted);font-weight:500}
+.sub{font-size:12px;color:var(--muted);margin-top:8px}
+.section{margin-top:18px}.section h2{font-size:18px;margin:0 0 13px}
+.statusrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eef1f6}.statusrow:last-child{border-bottom:0}
+.status{font-weight:bold;font-size:13px;padding:6px 10px;border-radius:8px;background:#e9f8f0;color:#16724e}.status.warn{background:#fff2df;color:#98570d}.status.off{background:#edf1f6;color:#5d6879}
+.plant-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
+.plant-visual{display:flex;align-items:center;justify-content:center;min-height:220px;background:linear-gradient(#f1f8ff,#f0f7ed);border-radius:12px;position:relative;overflow:hidden}
+.plant{font-size:86px;filter:drop-shadow(0 8px 6px #00000012);transition:transform .3s}.water{position:absolute;bottom:24px;font-size:23px;opacity:0;transition:opacity .2s}.water.active{opacity:1;animation:drip .8s infinite alternate}
+@keyframes drip{from{transform:translateY(-2px)}to{transform:translateY(5px)}}
+.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
+button{border:0;border-radius:10px;padding:11px 14px;font-weight:bold;cursor:pointer;font-size:13px}
+.primary{background:var(--blue);color:white}.secondary{background:#edf2fa;color:#233b60}.danger{background:#fff0e8;color:#a14c1d}button:hover{filter:brightness(.97)}button:focus{outline:3px solid #8bb4ff}
+input[type=range]{width:100%;accent-color:var(--blue);margin:15px 0 5px}
+.progress{height:9px;background:#edf1f6;border-radius:10px;overflow:hidden;margin-top:12px}.progress div{height:100%;width:58%;background:var(--green);border-radius:10px;transition:width .3s}
+.log{font-size:13px;color:#4d5c72;line-height:1.7;max-height:150px;overflow:auto;padding-left:18px}.log li{padding:2px 0}
+footer{text-align:center;color:#7a8798;font-size:12px;margin-top:24px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.plant-layout{grid-template-columns:1fr}.metric{font-size:29px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="eyebrow">IoT Mini Project · Software Simulation</div>
+  <h1>Smart Plant Monitoring System</h1>
+  <p>A simulated IoT dashboard that monitors soil moisture and automatically controls irrigation. No physical hardware is required for this demonstration.</p>
+</header>
+<main>
+  <div class="topline">
+    <div><strong>Plant Unit 01</strong><div class="sub">Greenhouse / home garden simulation</div></div>
+    <div class="pill"><span class="dot"></span> Simulation running</div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <div class="metric-label">Soil moisture</div>
+      <div class="metric"><span id="moistureValue">58</span><span class="unit"> %</span></div>
+      <div class="progress"><div id="moistureBar"></div></div>
+      <div class="sub" id="moistureHint">Moisture level is healthy</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">Water pump</div>
+      <div class="metric" id="pumpValue">OFF</div>
+      <div class="sub" id="pumpHint">No watering needed</div>
+    </div>
+    <div class="card">
+      <div class="metric-label">Plant status</div>
+      <div class="metric" id="plantStatus">Healthy</div>
+      <div class="sub" id="plantHint">Soil moisture is within target range</div>
+    </div>
+  </div>
+
+  <div class="plant-layout section">
+    <div class="card">
+      <h2>Plant & irrigation</h2>
+      <div class="plant-visual">
+        <div class="plant" id="plantEmoji">🪴</div>
+        <div class="water" id="waterEffect">💧 💧 💧</div>
+      </div>
+      <div class="controls">
+        <button class="primary" id="dryBtn">Simulate dry soil</button>
+        <button class="secondary" id="wetBtn">Add water</button>
+        <button class="secondary" id="autoBtn">Run auto demo</button>
+      </div>
+      <div class="sub">Demo buttons change the simulated sensor value. Automatic mode starts the pump when moisture is below 30% and stops it at 65%.</div>
+    </div>
+    <div class="card">
+      <h2>Sensor controls</h2>
+      <label for="moistureSlider" class="metric-label">Set simulated moisture manually</label>
+      <input id="moistureSlider" type="range" min="0" max="100" value="58">
+      <div class="statusrow"><span>Sensor reading</span><strong><span id="sliderValue">58</span>%</strong></div>
+      <div class="statusrow"><span>Dry threshold</span><strong>Below 30%</strong></div>
+      <div class="statusrow"><span>Target moisture</span><strong>65%</strong></div>
+      <div class="statusrow"><span>Connection</span><span class="status">Connected (simulated)</span></div>
+      <div class="controls">
+        <button class="danger" id="pumpToggle">Toggle pump manually</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card section">
+    <h2>System activity log</h2>
+    <ul class="log" id="activityLog"><li>System started. Simulated sensor connected.</li><li>Moisture reading received: 58%.</li></ul>
+  </div>
+  <div class="card section">
+    <h2>Project note</h2>
+    <p style="line-height:1.6;color:#526177;font-size:14px;margin-bottom:0">This is a front-end simulation of an IoT concept, not a real sensor connection. In a hardware version, a NodeMCU ESP8266 would read a soil-moisture sensor and control a pump through a suitable driver or relay. A real device would require appropriate power, wiring, and safety precautions.</p>
+  </div>
+  <footer>Smart Plant Monitoring System · IoT Mini Project Prototype</footer>
+</main>
+<script>
+const $ = id => document.getElementById(id);
+let moisture = 58;
+let pumpOn = false;
+let demoTimer = null;
+function log(message){
+  const li=document.createElement('li');
+  li.textContent=new Date().toLocaleTimeString()+' — '+message;
+  $('activityLog').prepend(li);
+  while($('activityLog').children.length>12) $('activityLog').lastElementChild.remove();
+}
+function setMoisture(value, source='Sensor'){
+  moisture=Math.max(0,Math.min(100,Number(value)));
+  $('moistureValue').textContent=moisture;
+  $('sliderValue').textContent=moisture;
+  $('moistureSlider').value=moisture;
+  $('moistureBar').style.width=moisture+'%';
+  $('moistureBar').style.background=moisture<30?'#d95b46':moisture<65?'#e88a2d':'#16845b';
+  $('moistureHint').textContent=moisture<30?'Soil is dry — watering required':moisture<65?'Moisture is moderate':'Moisture level is healthy';
+  $('plantStatus').textContent=moisture<30?'Needs water':moisture<65?'Monitor':'Healthy';
+  $('plantHint').textContent=moisture<30?'Automatic irrigation should start':moisture<65?'Moisture is below target':'Soil moisture is within target range';
+  if(moisture<30 && !pumpOn) setPump(true,'Soil moisture fell below 30%');
+  if(moisture>=65 && pumpOn) setPump(false,'Target moisture reached (65%)');
+  if(source) log(source+' reading: '+moisture+'%.');
+}
+function setPump(on,reason){
+  pumpOn=on;
+  $('pumpValue').textContent=on?'ON':'OFF';
+  $('pumpHint').textContent=on?'Watering plant automatically':'No watering needed';
+  $('pumpValue').style.color=on?'#16845b':'#17243a';
+  $('waterEffect').classList.toggle('active',on);
+  $('plantEmoji').style.transform=on?'translateY(-4px)':'translateY(0)';
+  $('pumpToggle').textContent=on?'Turn pump OFF manually':'Toggle pump manually';
+  if(reason) log('Pump '+(on?'ON':'OFF')+' — '+reason+'.');
+}
+$('moistureSlider').addEventListener('input',e=>setMoisture(e.target.value,'Manual simulation'));
+$('dryBtn').addEventListener('click',()=>setMoisture(18,'Dry-soil simulation'));
+$('wetBtn').addEventListener('click',()=>setMoisture(72,'Water added'));
+$('pumpToggle').addEventListener('click',()=>setPump(!pumpOn,'Manual control'));
+$('autoBtn').addEventListener('click',()=>{
+  if(demoTimer){clearInterval(demoTimer);demoTimer=null;$('autoBtn').textContent='Run auto demo';log('Automatic demo stopped.');return;}
+  $('autoBtn').textContent='Stop auto demo';
+  log('Automatic demo started.');
+  if(moisture>=30) setMoisture(24,'Demo: soil drying');
+  demoTimer=setInterval(()=>{
+    if(pumpOn){setMoisture(Math.min(100,moisture+9),'Demo: watering');}
+    else {setMoisture(Math.max(0,moisture-5),'Demo: soil drying');}
+    if(moisture>=65 && demoTimer){clearInterval(demoTimer);demoTimer=null;$('autoBtn').textContent='Run auto demo';log('Demo cycle complete.');}
+  },1000);
+});
+setMoisture(58,'Initial sensor');
+</script>
+</body>
+</html>
