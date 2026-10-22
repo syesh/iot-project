@@ -3,157 +3,885 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Smart Plant IoT Dashboard</title>
+<title>Smart Plant IoT | Live Dashboard</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <style>
-:root{--navy:#14233b;--blue:#2864dc;--bg:#f3f6fb;--green:#16845b;--orange:#e88a2d;--muted:#68758a;--border:#e2e8f0}
-*{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;background:var(--bg);color:#17243a}
-header{background:linear-gradient(120deg,#14233b,#244b7a);color:white;padding:26px 5vw}
-header .eyebrow{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#b9d0f4}
-header h1{margin:9px 0;font-size:clamp(24px,4vw,36px)}header p{margin:0;color:#dce7f7;max-width:760px;line-height:1.5}
-main{max-width:1100px;margin:26px auto;padding:0 18px 40px}
-.topline{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
-.pill{display:inline-flex;align-items:center;gap:7px;background:#e5f7ee;color:#116a49;padding:8px 12px;border-radius:20px;font-size:13px;font-weight:bold}
-.dot{width:8px;height:8px;background:#1baf72;border-radius:50%}
-.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
-.card{background:white;border:1px solid var(--border);border-radius:16px;padding:20px;box-shadow:0 5px 20px #19365b0a}
-.metric-label{font-size:13px;color:var(--muted);margin-bottom:10px}.metric{font-size:32px;font-weight:750;letter-spacing:-1px}.unit{font-size:15px;color:var(--muted);font-weight:500}
-.sub{font-size:12px;color:var(--muted);margin-top:8px}
-.section{margin-top:18px}.section h2{font-size:18px;margin:0 0 13px}
-.statusrow{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 0;border-bottom:1px solid #eef1f6}.statusrow:last-child{border-bottom:0}
-.status{font-weight:bold;font-size:13px;padding:6px 10px;border-radius:8px;background:#e9f8f0;color:#16724e}.status.warn{background:#fff2df;color:#98570d}.status.off{background:#edf1f6;color:#5d6879}
-.plant-layout{display:grid;grid-template-columns:1.1fr .9fr;gap:16px}
-.plant-visual{display:flex;align-items:center;justify-content:center;min-height:220px;background:linear-gradient(#f1f8ff,#f0f7ed);border-radius:12px;position:relative;overflow:hidden}
-.plant{font-size:86px;filter:drop-shadow(0 8px 6px #00000012);transition:transform .3s}.water{position:absolute;bottom:24px;font-size:23px;opacity:0;transition:opacity .2s}.water.active{opacity:1;animation:drip .8s infinite alternate}
-@keyframes drip{from{transform:translateY(-2px)}to{transform:translateY(5px)}}
-.controls{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px}
-button{border:0;border-radius:10px;padding:11px 14px;font-weight:bold;cursor:pointer;font-size:13px}
-.primary{background:var(--blue);color:white}.secondary{background:#edf2fa;color:#233b60}.danger{background:#fff0e8;color:#a14c1d}button:hover{filter:brightness(.97)}button:focus{outline:3px solid #8bb4ff}
-input[type=range]{width:100%;accent-color:var(--blue);margin:15px 0 5px}
-.progress{height:9px;background:#edf1f6;border-radius:10px;overflow:hidden;margin-top:12px}.progress div{height:100%;width:58%;background:var(--green);border-radius:10px;transition:width .3s}
-.log{font-size:13px;color:#4d5c72;line-height:1.7;max-height:150px;overflow:auto;padding-left:18px}.log li{padding:2px 0}
-footer{text-align:center;color:#7a8798;font-size:12px;margin-top:24px}
-@media(max-width:760px){.grid{grid-template-columns:1fr}.plant-layout{grid-template-columns:1fr}.metric{font-size:29px}}
+:root {
+  --bg: #0b1120;
+  --card: #131d31;
+  --card-border: #1f2e4d;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  
+  --primary: #38bdf8;
+  --primary-hover: #0ea5e9;
+  --green: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.12);
+  --green-border: rgba(16, 185, 129, 0.3);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.12);
+  --amber-border: rgba(245, 158, 11, 0.3);
+  --red: #f43f5e;
+  --red-bg: rgba(244, 63, 94, 0.12);
+  --red-border: rgba(244, 63, 94, 0.3);
+  
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 16px;
+  --transition: all 0.2s ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding-bottom: 40px;
+}
+
+/* Header */
+header {
+  background: #0f172a;
+  border-bottom: 1px solid var(--card-border);
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.header-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-icon {
+  font-size: 24px;
+}
+.brand-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Navigation Pills */
+.nav-pills {
+  display: flex;
+  background: #080d1a;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.nav-pill {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-pill.active {
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.nav-pill:hover:not(.active) {
+  color: #fff;
+}
+
+/* Status Indicator */
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.3; }
+}
+
+/* Main Content */
+main {
+  max-width: 1080px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 4 Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+}
+.card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: var(--transition);
+}
+.card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.card-title {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.card-value {
+  font-size: 32px;
+  font-weight: 800;
+  color: #fff;
+  margin: 10px 0 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  letter-spacing: -0.5px;
+}
+.card-unit {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--muted);
+}
+.badge {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 6px;
+  width: fit-content;
+}
+.badge-green { background: var(--green-bg); color: #34d399; border: 1px solid var(--green-border); }
+.badge-amber { background: var(--amber-bg); color: #fbbf24; border: 1px solid var(--amber-border); }
+.badge-red { background: var(--red-bg); color: #fb7185; border: 1px solid var(--red-border); }
+.badge-blue { background: rgba(56, 189, 248, 0.12); color: #38bdf8; border: 1px solid rgba(56, 189, 248, 0.3); }
+
+/* Progress bar inside card */
+.progress-bar {
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+.progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.4s ease, background 0.3s ease;
+}
+
+/* Center Interactive Demo Area */
+.demo-section {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+/* Plant Visual Box */
+.plant-box {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  min-height: 280px;
+  overflow: hidden;
+}
+.plant-emoji {
+  font-size: 82px;
+  filter: drop-shadow(0 10px 15px rgba(0,0,0,0.4));
+  transition: transform 0.3s ease;
+  user-select: none;
+}
+.plant-emoji.watering {
+  transform: translateY(-6px) scale(1.05);
+}
+.water-spray {
+  font-size: 20px;
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: var(--transition);
+  position: absolute;
+  top: 35px;
+  pointer-events: none;
+}
+.water-spray.active {
+  opacity: 1;
+  transform: translateY(6px);
+  animation: spray 0.6s infinite alternate;
+}
+@keyframes spray {
+  from { transform: translateY(4px); }
+  to { transform: translateY(12px) scale(1.1); }
+}
+.plant-status-text {
+  margin-top: 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--muted);
+  text-align: center;
+}
+
+/* Demo Control Panel */
+.controls-box {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+}
+.box-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.box-header p {
+  font-size: 12px;
+  color: var(--muted);
+}
+
+.button-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+button {
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: var(--transition);
+}
+.btn-primary {
+  background: #0284c7;
+  color: white;
+}
+.btn-primary:hover {
+  background: var(--primary-hover);
+}
+.btn-secondary {
+  background: #1e293b;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+}
+.btn-secondary:hover {
+  background: #28374d;
+}
+.btn-auto {
+  grid-column: span 2;
+  background: linear-gradient(135deg, #10b981, #0284c7);
+  color: white;
+  font-size: 13px;
+  padding: 13px;
+}
+.btn-auto:hover {
+  filter: brightness(1.1);
+}
+.btn-auto.running {
+  background: linear-gradient(135deg, #e11d48, #be123c);
+}
+
+/* Slider */
+.slider-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--card-border);
+}
+.slider-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 11.5px;
+  color: var(--muted);
+}
+.slider-label strong {
+  color: #fff;
+  font-family: var(--font-mono);
+}
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 999px;
+  background: #1e293b;
+  outline: none;
+  cursor: pointer;
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--primary);
+  box-shadow: 0 0 8px var(--primary);
+  cursor: pointer;
+}
+
+/* Clean Event Activity Log */
+.log-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+}
+.log-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.log-header h3 {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+.log-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.log-item {
+  font-size: 12px;
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-mono);
+}
+.log-time {
+  color: var(--dim);
+}
+.log-tag {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 5px;
+  border-radius: 4px;
+}
+.tag-pump { background: var(--green-bg); color: var(--green); }
+.tag-dry { background: var(--red-bg); color: var(--red); }
+.tag-sys { background: rgba(56, 189, 248, 0.1); color: var(--primary); }
+
+/* Bottom Quick Info */
+.info-strip {
+  text-align: center;
+  font-size: 12px;
+  color: var(--dim);
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.info-strip a {
+  color: var(--primary);
+  text-decoration: none;
+}
+.info-strip a:hover {
+  text-decoration: underline;
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .demo-section {
+    grid-template-columns: 1fr;
+  }
+  .card-value {
+    font-size: 26px;
+  }
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav-pills {
+    width: 100%;
+    justify-content: center;
+  }
+}
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+  .button-grid {
+    grid-template-columns: 1fr;
+  }
+  .btn-auto {
+    grid-column: span 1;
+  }
+}
 </style>
 </head>
 <body>
+
 <header>
-  <div class="eyebrow">IoT Mini Project · Software Simulation</div>
-  <h1>Smart Plant Monitoring System</h1>
-  <p>A simulated IoT dashboard that monitors soil moisture and automatically controls irrigation. No physical hardware is required for this demonstration.</p>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">🌱</span>
+      <div>
+        <div class="brand-title">Smart Plant IoT System</div>
+        <div class="brand-subtitle">Automated Closed-Loop Irrigation</div>
+      </div>
+    </div>
+
+    <!-- Navigation Switcher -->
+    <nav class="nav-pills">
+      <a href="index.html" class="nav-pill active">📊 Dashboard</a>
+      <a href="hardware.html" class="nav-pill">🔌 Hardware & Circuit</a>
+    </nav>
+
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      <span>Simulated ESP32 Active</span>
+    </div>
+  </div>
 </header>
+
 <main>
-  <div class="topline">
-    <div><strong>Plant Unit 01</strong><div class="sub">Greenhouse / home garden simulation</div></div>
-    <div class="pill"><span class="dot"></span> Simulation running</div>
-  </div>
-  <div class="grid">
+
+  <!-- 4 Clean Key Metrics -->
+  <div class="metrics-grid">
+    
+    <!-- Soil Moisture -->
     <div class="card">
-      <div class="metric-label">Soil moisture</div>
-      <div class="metric"><span id="moistureValue">58</span><span class="unit"> %</span></div>
-      <div class="progress"><div id="moistureBar"></div></div>
-      <div class="sub" id="moistureHint">Moisture level is healthy</div>
+      <div class="card-title">
+        <span>Soil Moisture</span>
+        <span>💧</span>
+      </div>
+      <div class="card-value">
+        <span id="moistVal">58</span>
+        <span class="card-unit">%</span>
+      </div>
+      <span class="badge badge-green" id="moistBadge">Optimal Hydration</span>
+      <div class="progress-bar">
+        <div class="progress-fill" id="moistBar" style="width: 58%; background: var(--primary);"></div>
+      </div>
     </div>
+
+    <!-- Water Pump State -->
     <div class="card">
-      <div class="metric-label">Water pump</div>
-      <div class="metric" id="pumpValue">OFF</div>
-      <div class="sub" id="pumpHint">No watering needed</div>
+      <div class="card-title">
+        <span>Water Pump (Relay)</span>
+        <span>⚙️</span>
+      </div>
+      <div class="card-value" id="pumpVal" style="color: var(--muted);">
+        OFF
+      </div>
+      <span class="badge badge-blue" id="pumpBadge">Idle · Standby</span>
+      <div class="progress-bar">
+        <div class="progress-fill" id="pumpBar" style="width: 0%; background: var(--green);"></div>
+      </div>
     </div>
+
+    <!-- Temperature & Humidity -->
     <div class="card">
-      <div class="metric-label">Plant status</div>
-      <div class="metric" id="plantStatus">Healthy</div>
-      <div class="sub" id="plantHint">Soil moisture is within target range</div>
+      <div class="card-title">
+        <span>Ambient Climate</span>
+        <span>🌡️</span>
+      </div>
+      <div class="card-value">
+        <span id="tempVal">24.2</span>
+        <span class="card-unit">°C</span>
+      </div>
+      <span class="badge badge-amber" id="humBadge">62% RH · Comfort</span>
+      <div class="progress-bar">
+        <div class="progress-fill" id="tempBar" style="width: 60%; background: var(--amber);"></div>
+      </div>
     </div>
+
+    <!-- Plant Health Index -->
+    <div class="card">
+      <div class="card-title">
+        <span>Plant Health (PHI)</span>
+        <span>🩺</span>
+      </div>
+      <div class="card-value">
+        <span id="phiVal">94</span>
+        <span class="card-unit">/ 100</span>
+      </div>
+      <span class="badge badge-green" id="phiBadge">Vibrant & Thriving</span>
+      <div class="progress-bar">
+        <div class="progress-fill" id="phiBar" style="width: 94%; background: var(--green);"></div>
+      </div>
+    </div>
+
   </div>
 
-  <div class="plant-layout section">
-    <div class="card">
-      <h2>Plant & irrigation</h2>
-      <div class="plant-visual">
-        <div class="plant" id="plantEmoji">🪴</div>
-        <div class="water" id="waterEffect">💧 💧 💧</div>
-      </div>
-      <div class="controls">
-        <button class="primary" id="dryBtn">Simulate dry soil</button>
-        <button class="secondary" id="wetBtn">Add water</button>
-        <button class="secondary" id="autoBtn">Run auto demo</button>
-      </div>
-      <div class="sub">Demo buttons change the simulated sensor value. Automatic mode starts the pump when moisture is below 30% and stops it at 65%.</div>
-    </div>
-    <div class="card">
-      <h2>Sensor controls</h2>
-      <label for="moistureSlider" class="metric-label">Set simulated moisture manually</label>
-      <input id="moistureSlider" type="range" min="0" max="100" value="58">
-      <div class="statusrow"><span>Sensor reading</span><strong><span id="sliderValue">58</span>%</strong></div>
-      <div class="statusrow"><span>Dry threshold</span><strong>Below 30%</strong></div>
-      <div class="statusrow"><span>Target moisture</span><strong>65%</strong></div>
-      <div class="statusrow"><span>Connection</span><span class="status">Connected (simulated)</span></div>
-      <div class="controls">
-        <button class="danger" id="pumpToggle">Toggle pump manually</button>
+  <!-- Center Demo & Controls Area -->
+  <div class="demo-section">
+    
+    <!-- Visual Plant Stage -->
+    <div class="plant-box">
+      <div class="water-spray" id="waterSpray">💧 💦 💧</div>
+      <div class="plant-emoji" id="plantEmoji">🪴</div>
+      <div class="plant-status-text" id="statusHint">
+        Soil moisture is healthy (58%). No irrigation needed.
       </div>
     </div>
+
+    <!-- Interactive Demonstration Buttons -->
+    <div class="controls-box">
+      <div class="box-header">
+        <h2>Interactive Simulation Controls</h2>
+        <p>Trigger edge cases to test the automated hysteresis logic (Turn ON &lt; 30%, Turn OFF &ge; 65%).</p>
+      </div>
+
+      <div class="button-grid">
+        <button class="btn-secondary" id="dryBtn">
+          <span>🌵</span> Simulate Dry Soil
+        </button>
+        <button class="btn-secondary" id="wetBtn">
+          <span>🌧️</span> Add Water (65%)
+        </button>
+        <button class="btn-secondary" id="manualPumpBtn">
+          <span>⚡</span> Toggle Pump Manually
+        </button>
+        <button class="btn-secondary" id="tankBtn">
+          <span>🪣</span> Reservoir: Full (OK)
+        </button>
+        <button class="btn-auto" id="autoDemoBtn">
+          <span>▶</span> Run 1-Click Automated Demo Cycle
+        </button>
+      </div>
+
+      <!-- Manual Slider -->
+      <div class="slider-container">
+        <div class="slider-label">
+          <span>Simulate Sensor Value Manually</span>
+          <strong id="sliderReading">58%</strong>
+        </div>
+        <input type="range" id="moistSlider" min="0" max="100" value="58">
+      </div>
+    </div>
+
   </div>
 
-  <div class="card section">
-    <h2>System activity log</h2>
-    <ul class="log" id="activityLog"><li>System started. Simulated sensor connected.</li><li>Moisture reading received: 58%.</li></ul>
+  <!-- Clean Recent Activity Log -->
+  <div class="log-card">
+    <div class="log-header">
+      <h3>System Activity Feed</h3>
+      <span style="font-size: 11px; color: var(--dim);">Automated Events</span>
+    </div>
+    <ul class="log-list" id="activityFeed">
+      <!-- Recent entries rendered here -->
+    </ul>
   </div>
-  <div class="card section">
-    <h2>Project note</h2>
-    <p style="line-height:1.6;color:#526177;font-size:14px;margin-bottom:0">This is a front-end simulation of an IoT concept, not a real sensor connection. In a hardware version, a NodeMCU ESP8266 would read a soil-moisture sensor and control a pump through a suitable driver or relay. A real device would require appropriate power, wiring, and safety precautions.</p>
+
+  <!-- Quick Info Strip -->
+  <div class="info-strip">
+    <span>💡 Thresholds: Dry &lt; 30% | Target &ge; 65%</span>
+    <span>•</span>
+    <span>NodeMCU ESP8266 & ESP32 Compatible</span>
+    <span>•</span>
+    <a href="hardware.html">View Circuit Schematics & Pinout &rarr;</a>
   </div>
-  <footer>Smart Plant Monitoring System · IoT Mini Project Prototype</footer>
+
 </main>
+
 <script>
-const $ = id => document.getElementById(id);
+// State
 let moisture = 58;
+let temp = 24.2;
+let humidity = 62;
 let pumpOn = false;
+let tankOk = true;
 let demoTimer = null;
-function log(message){
-  const li=document.createElement('li');
-  li.textContent=new Date().toLocaleTimeString()+' — '+message;
-  $('activityLog').prepend(li);
-  while($('activityLog').children.length>12) $('activityLog').lastElementChild.remove();
+const DRY_THRESHOLD = 30;
+const TARGET_THRESHOLD = 65;
+
+// Audio Synthesizer (Zero external dependencies)
+let audioCtx = null;
+function beep(freq, duration = 0.08) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + duration);
+  } catch(e){}
 }
-function setMoisture(value, source='Sensor'){
-  moisture=Math.max(0,Math.min(100,Number(value)));
-  $('moistureValue').textContent=moisture;
-  $('sliderValue').textContent=moisture;
-  $('moistureSlider').value=moisture;
-  $('moistureBar').style.width=moisture+'%';
-  $('moistureBar').style.background=moisture<30?'#d95b46':moisture<65?'#e88a2d':'#16845b';
-  $('moistureHint').textContent=moisture<30?'Soil is dry — watering required':moisture<65?'Moisture is moderate':'Moisture level is healthy';
-  $('plantStatus').textContent=moisture<30?'Needs water':moisture<65?'Monitor':'Healthy';
-  $('plantHint').textContent=moisture<30?'Automatic irrigation should start':moisture<65?'Moisture is below target':'Soil moisture is within target range';
-  if(moisture<30 && !pumpOn) setPump(true,'Soil moisture fell below 30%');
-  if(moisture>=65 && pumpOn) setPump(false,'Target moisture reached (65%)');
-  if(source) log(source+' reading: '+moisture+'%.');
+
+function addLog(tag, text) {
+  const feed = document.getElementById('activityFeed');
+  const li = document.createElement('li');
+  li.className = 'log-item';
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  
+  let tagClass = 'tag-sys';
+  if (tag === 'PUMP') tagClass = 'tag-pump';
+  else if (tag === 'DRY' || tag === 'ALERT') tagClass = 'tag-dry';
+  
+  li.innerHTML = `<span class="log-time">[${time}]</span><span class="log-tag ${tagClass}">${tag}</span> <span>${text}</span>`;
+  feed.prepend(li);
+  while (feed.children.length > 5) feed.lastElementChild.remove();
 }
-function setPump(on,reason){
-  pumpOn=on;
-  $('pumpValue').textContent=on?'ON':'OFF';
-  $('pumpHint').textContent=on?'Watering plant automatically':'No watering needed';
-  $('pumpValue').style.color=on?'#16845b':'#17243a';
-  $('waterEffect').classList.toggle('active',on);
-  $('plantEmoji').style.transform=on?'translateY(-4px)':'translateY(0)';
-  $('pumpToggle').textContent=on?'Turn pump OFF manually':'Toggle pump manually';
-  if(reason) log('Pump '+(on?'ON':'OFF')+' — '+reason+'.');
+
+function calculatePHI() {
+  let m = 100;
+  if (moisture < DRY_THRESHOLD) m = Math.max(20, 100 - (DRY_THRESHOLD - moisture) * 3);
+  else if (moisture > TARGET_THRESHOLD + 15) m = Math.max(50, 100 - (moisture - 80) * 2);
+  return Math.round(m * 0.6 + 40);
 }
-$('moistureSlider').addEventListener('input',e=>setMoisture(e.target.value,'Manual simulation'));
-$('dryBtn').addEventListener('click',()=>setMoisture(18,'Dry-soil simulation'));
-$('wetBtn').addEventListener('click',()=>setMoisture(72,'Water added'));
-$('pumpToggle').addEventListener('click',()=>setPump(!pumpOn,'Manual control'));
-$('autoBtn').addEventListener('click',()=>{
-  if(demoTimer){clearInterval(demoTimer);demoTimer=null;$('autoBtn').textContent='Run auto demo';log('Automatic demo stopped.');return;}
-  $('autoBtn').textContent='Stop auto demo';
-  log('Automatic demo started.');
-  if(moisture>=30) setMoisture(24,'Demo: soil drying');
-  demoTimer=setInterval(()=>{
-    if(pumpOn){setMoisture(Math.min(100,moisture+9),'Demo: watering');}
-    else {setMoisture(Math.max(0,moisture-5),'Demo: soil drying');}
-    if(moisture>=65 && demoTimer){clearInterval(demoTimer);demoTimer=null;$('autoBtn').textContent='Run auto demo';log('Demo cycle complete.');}
-  },1000);
+
+function updateUI() {
+  const mRounded = Math.round(moisture);
+  document.getElementById('moistVal').textContent = mRounded;
+  document.getElementById('sliderReading').textContent = mRounded + '%';
+  document.getElementById('moistSlider').value = mRounded;
+  document.getElementById('moistBar').style.width = mRounded + '%';
+
+  const mBadge = document.getElementById('moistBadge');
+  const plantEmoji = document.getElementById('plantEmoji');
+  const statusHint = document.getElementById('statusHint');
+
+  if (moisture < DRY_THRESHOLD) {
+    mBadge.className = 'badge badge-red';
+    mBadge.textContent = 'Critical Dry';
+    plantEmoji.textContent = '🥀';
+    statusHint.textContent = `Soil moisture is critical (${mRounded}%). Automated irrigation activated.`;
+  } else if (moisture >= TARGET_THRESHOLD) {
+    mBadge.className = 'badge badge-green';
+    mBadge.textContent = 'Well Saturated';
+    plantEmoji.textContent = '🪴';
+    statusHint.textContent = `Target moisture satisfied (${mRounded}%). Pump in standby mode.`;
+  } else {
+    mBadge.className = 'badge badge-blue';
+    mBadge.textContent = 'Optimal Hydration';
+    plantEmoji.textContent = '🌿';
+    statusHint.textContent = `Soil moisture is within acceptable range (${mRounded}%).`;
+  }
+
+  // Pump UI
+  const pumpVal = document.getElementById('pumpVal');
+  const pumpBadge = document.getElementById('pumpBadge');
+  const pumpBar = document.getElementById('pumpBar');
+  const spray = document.getElementById('waterSpray');
+
+  if (pumpOn) {
+    pumpVal.textContent = 'ON';
+    pumpVal.style.color = 'var(--green)';
+    pumpBadge.className = 'badge badge-green';
+    pumpBadge.textContent = 'Irrigating Active';
+    pumpBar.style.width = '100%';
+    plantEmoji.classList.add('watering');
+    spray.classList.add('active');
+  } else {
+    pumpVal.textContent = 'OFF';
+    pumpVal.style.color = 'var(--muted)';
+    pumpBadge.className = 'badge badge-blue';
+    pumpBadge.textContent = 'Idle · Standby';
+    pumpBar.style.width = '0%';
+    plantEmoji.classList.remove('watering');
+    spray.classList.remove('active');
+  }
+
+  // Health
+  const phi = calculatePHI();
+  document.getElementById('phiVal').textContent = phi;
+  document.getElementById('phiBar').style.width = phi + '%';
+  const phiBadge = document.getElementById('phiBadge');
+  if (phi >= 80) {
+    phiBadge.className = 'badge badge-green';
+    phiBadge.textContent = 'Vibrant & Thriving';
+  } else if (phi >= 60) {
+    phiBadge.className = 'badge badge-amber';
+    phiBadge.textContent = 'Moderate Condition';
+  } else {
+    phiBadge.className = 'badge badge-red';
+    phiBadge.textContent = 'Needs Attention';
+  }
+
+  // Tank Button
+  const tankBtn = document.getElementById('tankBtn');
+  tankBtn.innerHTML = tankOk ? '<span>🪣</span> Reservoir: Full (OK)' : '<span>⚠️</span> Reservoir: EMPTY';
+  tankBtn.style.borderColor = tankOk ? 'var(--card-border)' : 'var(--red)';
+}
+
+function setPump(on, reason = '') {
+  if (on && !tankOk) {
+    addLog('ALERT', 'Cannot run pump: Reservoir tank is empty!');
+    beep(250, 0.2);
+    return;
+  }
+  pumpOn = on;
+  if (on) {
+    addLog('PUMP', `Relay turned ON — ${reason}`);
+    beep(880, 0.1);
+  } else {
+    addLog('PUMP', `Relay turned OFF — ${reason}`);
+    beep(440, 0.08);
+  }
+  updateUI();
+}
+
+function checkLogic() {
+  if (!tankOk) {
+    if (pumpOn) setPump(false, 'Dry-run protection tripped');
+    return;
+  }
+  if (moisture < DRY_THRESHOLD && !pumpOn) {
+    setPump(true, `Moisture (${Math.round(moisture)}%) fell below ${DRY_THRESHOLD}%`);
+  } else if (moisture >= TARGET_THRESHOLD && pumpOn) {
+    setPump(false, `Target saturation (${TARGET_THRESHOLD}%) reached`);
+  }
+}
+
+// Continuous Simulation Loop
+setInterval(() => {
+  if (pumpOn) {
+    moisture = Math.min(100, moisture + 4);
+  } else {
+    moisture = Math.max(0, moisture - 0.2);
+  }
+  checkLogic();
+  updateUI();
+}, 1000);
+
+// Event Listeners
+document.getElementById('moistSlider').addEventListener('input', e => {
+  moisture = parseFloat(e.target.value);
+  checkLogic();
+  updateUI();
 });
-setMoisture(58,'Initial sensor');
+
+document.getElementById('dryBtn').addEventListener('click', () => {
+  moisture = 18;
+  addLog('DRY', 'Simulated dry soil (18%). Tripping automated watering.');
+  beep(350, 0.1);
+  checkLogic();
+  updateUI();
+});
+
+document.getElementById('wetBtn').addEventListener('click', () => {
+  moisture = 72;
+  addLog('SYS', 'Added water manually (72%). Pump standby.');
+  beep(550, 0.08);
+  checkLogic();
+  updateUI();
+});
+
+document.getElementById('manualPumpBtn').addEventListener('click', () => {
+  setPump(!pumpOn, 'User manual toggle');
+});
+
+document.getElementById('tankBtn').addEventListener('click', () => {
+  tankOk = !tankOk;
+  if (!tankOk) {
+    addLog('ALERT', 'Reservoir float switch: EMPTY! Pump locked out.');
+    beep(200, 0.25);
+  } else {
+    addLog('SYS', 'Reservoir refilled. Float switch normal.');
+    beep(520, 0.1);
+  }
+  checkLogic();
+  updateUI();
+});
+
+// Automated 1-Click Demo
+document.getElementById('autoDemoBtn').addEventListener('click', () => {
+  const btn = document.getElementById('autoDemoBtn');
+  if (demoTimer) {
+    clearInterval(demoTimer);
+    demoTimer = null;
+    btn.innerHTML = '<span>▶</span> Run 1-Click Automated Demo Cycle';
+    btn.classList.remove('running');
+    addLog('SYS', 'Demo stopped by user.');
+    return;
+  }
+
+  btn.innerHTML = '<span>⏹</span> Stop Demo Cycle';
+  btn.classList.add('running');
+  addLog('SYS', 'Demo started: Soil drying down to 18%...');
+  moisture = 18;
+  checkLogic();
+  updateUI();
+
+  demoTimer = setInterval(() => {
+    if (moisture >= TARGET_THRESHOLD) {
+      clearInterval(demoTimer);
+      demoTimer = null;
+      btn.innerHTML = '<span>▶</span> Run 1-Click Automated Demo Cycle';
+      btn.classList.remove('running');
+      addLog('SYS', 'Demo cycle complete: System automatically stopped pump at target saturation.');
+    }
+  }, 1000);
+});
+
+// Initial load
+addLog('SYS', 'System online. Simulated NodeMCU / ESP32 active.');
+updateUI();
 </script>
 </body>
 </html>

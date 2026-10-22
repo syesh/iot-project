@@ -1,0 +1,39 @@
+{
+  "version": 1,
+  "author": "IoT Mini Project Team",
+  "editor": "wokwi",
+  "parts": [
+    { "type": "board-esp32-devkit-c-v4", "id": "esp", "top": 0, "left": 0, "attrs": {} },
+    { "type": "wokwi-potentiometer", "id": "pot1", "top": -120, "left": -120, "attrs": { "label": "Soil Moisture" } },
+    { "type": "wokwi-dht22", "id": "dht1", "top": -140, "left": 150, "attrs": { "temperature": "24.5", "humidity": "62" } },
+    { "type": "board-ssd1306", "id": "oled1", "top": 200, "left": -140, "attrs": { "i2cAddress": "0x3c" } },
+    { "type": "wokwi-relay-module", "id": "relay1", "top": 200, "left": 160, "attrs": {} },
+    { "type": "wokwi-led", "id": "led_pump", "top": 120, "left": 230, "attrs": { "color": "blue", "label": "Pump Active" } },
+    { "type": "wokwi-buzzer", "id": "bz1", "top": -40, "left": 230, "attrs": { "hasVolume": "1" } },
+    { "type": "wokwi-pushbutton", "id": "btn_float", "top": 70, "left": -150, "attrs": { "color": "green", "label": "Tank OK/Low" } }
+  ],
+  "connections": [
+    [ "esp:TX", "$serialMonitor:RX", "", [] ],
+    [ "esp:RX", "$serialMonitor:TX", "", [] ],
+    [ "pot1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "pot1:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "pot1:SIG", "esp:34", "green", [ "v0" ] ],
+    [ "dht1:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "dht1:GND", "esp:GND.1", "black", [ "v0" ] ],
+    [ "dht1:SDA", "esp:15", "orange", [ "v0" ] ],
+    [ "oled1:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "oled1:VCC", "esp:3V3", "red", [ "v0" ] ],
+    [ "oled1:SDA", "esp:21", "yellow", [ "v0" ] ],
+    [ "oled1:SCL", "esp:22", "cyan", [ "v0" ] ],
+    [ "relay1:VCC", "esp:5V", "red", [ "v0" ] ],
+    [ "relay1:GND", "esp:GND.2", "black", [ "v0" ] ],
+    [ "relay1:IN", "esp:23", "purple", [ "v0" ] ],
+    [ "led_pump:A", "esp:4", "blue", [ "v0" ] ],
+    [ "led_pump:C", "esp:GND.2", "black", [ "v0" ] ],
+    [ "bz1:1", "esp:GND.1", "black", [ "v0" ] ],
+    [ "bz1:2", "esp:18", "magenta", [ "v0" ] ],
+    [ "btn_float:1.l", "esp:19", "green", [ "v0" ] ],
+    [ "btn_float:2.l", "esp:GND.1", "black", [ "v0" ] ]
+  ],
+  "dependencies": {}
+}

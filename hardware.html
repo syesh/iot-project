@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Plant IoT | Hardware Guide & Circuit Workbench</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0b1120;
+  --card: #131d31;
+  --card-border: #1f2e4d;
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --dim: #64748b;
+  
+  --primary: #38bdf8;
+  --green: #10b981;
+  --green-bg: rgba(16, 185, 129, 0.12);
+  --green-border: rgba(16, 185, 129, 0.3);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245, 158, 11, 0.12);
+  --red: #f43f5e;
+  --red-bg: rgba(244, 63, 94, 0.12);
+  
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius: 16px;
+  --transition: all 0.2s ease;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  line-height: 1.5;
+  padding-bottom: 40px;
+}
+
+/* Header */
+header {
+  background: #0f172a;
+  border-bottom: 1px solid var(--card-border);
+  padding: 14px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.header-inner {
+  max-width: 1080px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.brand-icon {
+  font-size: 24px;
+}
+.brand-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+.brand-subtitle {
+  font-size: 11px;
+  color: var(--muted);
+}
+
+/* Navigation Pills */
+.nav-pills {
+  display: flex;
+  background: #080d1a;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  padding: 3px;
+  gap: 2px;
+}
+.nav-pill {
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 14px;
+  border-radius: 999px;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.nav-pill.active {
+  background: #1e293b;
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.3);
+}
+.nav-pill:hover:not(.active) {
+  color: #fff;
+}
+
+.live-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--green);
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  padding: 5px 10px;
+  border-radius: 999px;
+}
+.live-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--green);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--green);
+}
+
+/* Main Container */
+main {
+  max-width: 1080px;
+  margin: 24px auto;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Top Intro Banner */
+.intro-banner {
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.1), rgba(16, 185, 129, 0.08));
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+}
+.intro-banner h1 {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+  margin-bottom: 4px;
+}
+.intro-banner p {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Component Cards Grid */
+.hardware-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.hw-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 14px;
+  transition: var(--transition);
+}
+.hw-card:hover {
+  border-color: rgba(56, 189, 248, 0.3);
+}
+
+.hw-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+.hw-title-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hw-icon {
+  font-size: 26px;
+}
+.hw-title {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+.hw-role {
+  font-size: 11px;
+  color: var(--primary);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.pin-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+  border: 1px solid rgba(56, 189, 248, 0.25);
+  padding: 3px 8px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+
+.hw-desc {
+  font-size: 12.5px;
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+/* Visual Interactive Modules inside Cards */
+.module-visual {
+  background: #090e18;
+  border: 1px solid #1a2744;
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+/* Board LEDs */
+.led-cluster {
+  display: flex;
+  gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+}
+.led-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.led-circle {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #334155;
+  transition: var(--transition);
+}
+.led-circle.pwr { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+.led-circle.wifi { background: #38bdf8; box-shadow: 0 0 6px #38bdf8; animation: blink 1.5s infinite; }
+.led-circle.relay-on { background: #10b981; box-shadow: 0 0 8px #10b981; }
+
+@keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* OLED Graphic */
+.oled-preview {
+  background: #020617;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  color: #38bdf8;
+  font-size: 11px;
+  line-height: 1.4;
+  width: 100%;
+}
+.oled-preview-header {
+  border-bottom: 1px solid #1e293b;
+  padding-bottom: 3px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 9.5px;
+  color: var(--dim);
+}
+.oled-preview-big {
+  font-size: 14px;
+  font-weight: 700;
+  color: #a5f3fc;
+}
+
+/* Relay Graphic Box */
+.relay-box {
+  width: 90px;
+  height: 38px;
+  background: #1d4ed8;
+  border-radius: 6px;
+  color: white;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition);
+}
+.relay-box.active {
+  background: #059669;
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+
+/* Action button inside card */
+button {
+  font-family: var(--font-sans);
+  border: none;
+  border-radius: 8px;
+  padding: 9px 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  background: #1e293b;
+  color: var(--text);
+  border: 1px solid var(--card-border);
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+button:hover {
+  background: #28374d;
+  color: #fff;
+}
+.btn-primary {
+  background: #0284c7;
+  color: white;
+  border: none;
+}
+.btn-primary:hover {
+  background: #0ea5e9;
+}
+
+/* Live Serial Console Section */
+.serial-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.serial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.serial-header h2 {
+  font-size: 15px;
+  font-weight: 700;
+  color: #fff;
+}
+.serial-terminal {
+  background: #030712;
+  border: 1px solid #1f2937;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  height: 180px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.term-line {
+  line-height: 1.4;
+  word-break: break-all;
+}
+.term-sys { color: #38bdf8; }
+.term-pump { color: #34d399; font-weight: 700; }
+.term-alert { color: #f43f5e; font-weight: 700; }
+.term-data { color: #94a3b8; }
+
+.quick-keys-bar {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+/* Quick Pinout Table */
+.pinout-card {
+  background: var(--card);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+}
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  margin-top: 10px;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  min-width: 500px;
+}
+th, td {
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 1px solid #1a2744;
+}
+th {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 11px;
+  text-transform: uppercase;
+}
+td {
+  color: var(--text);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .hardware-grid {
+    grid-template-columns: 1fr;
+  }
+  .header-inner {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .nav-pills {
+    width: 100%;
+    justify-content: center;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand">
+      <span class="brand-icon">🌱</span>
+      <div>
+        <div class="brand-title">Smart Plant IoT System</div>
+        <div class="brand-subtitle">Hardware Guide & Circuit Workbench</div>
+      </div>
+    </div>
+
+    <!-- Navigation Switcher -->
+    <nav class="nav-pills">
+      <a href="index.html" class="nav-pill">📊 Dashboard</a>
+      <a href="hardware.html" class="nav-pill active">🔌 Hardware & Circuit</a>
+    </nav>
+
+    <div class="live-badge">
+      <span class="live-dot"></span>
+      <span>ESP32 (WROOM-32)</span>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- Top Simple Intro -->
+  <div class="intro-banner">
+    <h1>Simple Hardware Architecture Explained</h1>
+    <p>
+      An IoT system consists of <strong>Sensors (inputs)</strong>, a <strong>Microcontroller (the brain)</strong>, and <strong>Actuators (outputs)</strong>. Here is how each physical component works and why it was selected for this project.
+    </p>
+  </div>
+
+  <!-- 4 Primary Hardware Components Grid -->
+  <div class="hardware-grid">
+
+    <!-- 1. The Microcontroller (Brain) -->
+    <div class="hw-card">
+      <div>
+        <div class="hw-header">
+          <div class="hw-title-group">
+            <span class="hw-icon">🧠</span>
+            <div>
+              <div class="hw-title">ESP32 / NodeMCU</div>
+              <div class="hw-role">The Brain (Microcontroller)</div>
+            </div>
+          </div>
+          <span class="pin-pill">3.3V Power</span>
+        </div>
+        <p class="hw-desc" style="margin: 10px 0;">
+          Central controller running the 2-second sensing loop. Reads sensor ADC values, evaluates irrigation thresholds, and handles Wi-Fi telemetry.
+        </p>
+      </div>
+
+      <div class="module-visual">
+        <div class="led-cluster">
+          <div class="led-item"><div class="led-circle pwr"></div><span>PWR</span></div>
+          <div class="led-item"><div class="led-circle wifi"></div><span>WiFi</span></div>
+          <div class="led-item"><div class="led-circle" id="mcuRelayLed"></div><span>Relay IO23</span></div>
+        </div>
+        <span style="font-size: 11px; font-family: var(--font-mono); color: var(--dim);">ESP-WROOM-32</span>
+      </div>
+    </div>
+
+    <!-- 2. Soil Moisture Sensor (The Eye) -->
+    <div class="hw-card">
+      <div>
+        <div class="hw-header">
+          <div class="hw-title-group">
+            <span class="hw-icon">💧</span>
+            <div>
+              <div class="hw-title">Capacitive Moisture v1.2</div>
+              <div class="hw-role">The Sensor (Substrate Input)</div>
+            </div>
+          </div>
+          <span class="pin-pill">GPIO 34 (ADC)</span>
+        </div>
+        <p class="hw-desc" style="margin: 10px 0;">
+          Corrosion-resistant probe measuring soil dielectric permittivity. Outputs an analog voltage (1.2V–3.0V) directly to GPIO 34.
+        </p>
+      </div>
+
+      <div class="module-visual">
+        <span style="font-size: 12px; color: var(--muted);">Analog Signal Output:</span>
+        <span style="font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--primary);" id="voltReading">1.82 V</span>
+      </div>
+    </div>
+
+    <!-- 3. The 5V Relay Module (The Switch) -->
+    <div class="hw-card">
+      <div>
+        <div class="hw-header">
+          <div class="hw-title-group">
+            <span class="hw-icon">⚡</span>
+            <div>
+              <div class="hw-title">5V Relay Module</div>
+              <div class="hw-role">The Actuator Switch (High-Power Drive)</div>
+            </div>
+          </div>
+          <span class="pin-pill">GPIO 23 / D1</span>
+        </div>
+        <p class="hw-desc" style="margin: 10px 0;">
+          Optocoupler-isolated electronic switch that safely turns the 5V DC submersible pump on and off without overloading the microcontroller.
+        </p>
+      </div>
+
+      <div class="module-visual">
+        <div class="relay-box" id="relayBox">RELAY: OFF</div>
+        <button class="btn-primary" id="toggleRelayBtn">⚡ Test Relay Click</button>
+      </div>
+    </div>
+
+    <!-- 4. SSD1306 OLED Display (The Local Screen) -->
+    <div class="hw-card">
+      <div>
+        <div class="hw-header">
+          <div class="hw-title-group">
+            <span class="hw-icon">📺</span>
+            <div>
+              <div class="hw-title">0.96" SSD1306 OLED</div>
+              <div class="hw-role">Local Display (I2C Bus)</div>
+            </div>
+          </div>
+          <span class="pin-pill">GPIO 21 / 22 (I2C)</span>
+        </div>
+        <p class="hw-desc" style="margin: 10px 0;">
+          Low-power 128x64 display installed directly on the plant pot to display real-time moisture, temperature, and pump status locally.
+        </p>
+      </div>
+
+      <div class="oled-preview">
+        <div class="oled-preview-header">
+          <span>SMART PLANT | ESP32</span>
+          <span>WIFI: OK</span>
+        </div>
+        <div class="oled-preview-big">
+          Moist: <span id="oledMoist">58</span>%
+        </div>
+        <div style="font-size: 10px; color: #7dd3fc; margin: 2px 0;">
+          Temp: <span id="oledTemp">24.2</span>°C &nbsp;H: 62%
+        </div>
+        <div style="font-size: 10px; font-weight: 700; color: #64748b;" id="oledPumpLine">
+          PUMP: OFF [IDLE]
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Live UART Serial Monitor -->
+  <div class="serial-card">
+    <div class="serial-header">
+      <div>
+        <h2>Live UART Serial Output (COM3 @ 115200 Baud)</h2>
+        <p style="font-size: 12px; color: var(--muted);">Simulates the real microcontroller serial output seen in Arduino IDE Serial Monitor.</p>
+      </div>
+      <span class="pin-pill">115200 Baud · 8N1</span>
+    </div>
+
+    <div class="serial-terminal" id="terminal">
+      <!-- Live UART stream here -->
+    </div>
+
+    <div class="quick-keys-bar">
+      <button onclick="sendKey('D')">🌵 Send 'D' (Dry Soil &lt; 30%)</button>
+      <button onclick="sendKey('W')">🌧️ Send 'W' (Add Water &ge; 65%)</button>
+      <button onclick="sendKey('P')">⚡ Send 'P' (Toggle Pump Relay)</button>
+      <button onclick="clearTerm()">🧹 Clear Console</button>
+    </div>
+  </div>
+
+  <!-- Quick Pinout Table -->
+  <div class="pinout-card">
+    <div class="serial-header">
+      <div>
+        <h2>Circuit Wiring & Pinout Reference</h2>
+        <p style="font-size: 12px; color: var(--muted);">Direct pin mappings and connections for physical microcontroller assembly.</p>
+      </div>
+    </div>
+
+    <div class="table-responsive">
+      <table>
+        <thead>
+          <tr>
+            <th>Hardware Module</th>
+            <th>ESP32 Pin</th>
+            <th>NodeMCU (ESP8266)</th>
+            <th>Purpose / Protocol</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Capacitive Soil Sensor</td>
+            <td>GPIO 34</td>
+            <td>A0 (ADC0)</td>
+            <td>Analog Voltage (0 to 3.3V)</td>
+          </tr>
+          <tr>
+            <td>5V Relay Module (Water Pump)</td>
+            <td>GPIO 23</td>
+            <td>D1 (GPIO 5)</td>
+            <td>Digital Output (Active LOW)</td>
+          </tr>
+          <tr>
+            <td>DHT22 Climate Sensor</td>
+            <td>GPIO 15</td>
+            <td>D2 (GPIO 4)</td>
+            <td>Digital 1-Wire Signal</td>
+          </tr>
+          <tr>
+            <td>SSD1306 OLED (0.96")</td>
+            <td>GPIO 21 (SDA) / 22 (SCL)</td>
+            <td>D2 (SDA) / D1 (SCL)</td>
+            <td>I2C Bus (Address 0x3C)</td>
+          </tr>
+          <tr>
+            <td>Reservoir Float Switch</td>
+            <td>GPIO 19</td>
+            <td>D6 (GPIO 12)</td>
+            <td>Digital Dry-Run Safety Cutoff</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</main>
+
+<script>
+// State
+let pumpActive = false;
+let moisture = 58;
+let temp = 24.2;
+let audioCtx = null;
+
+// Safe tactile click sound without autoplay warnings
+function clickSound(freq = 600) {
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+    gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.06);
+    osc.connect(gain);
+    gain.connect(audioCtx.destination);
+    osc.start();
+    osc.stop(audioCtx.currentTime + 0.06);
+  } catch(e){}
+}
+
+function logSerial(line, type = 'data') {
+  const term = document.getElementById('terminal');
+  if (!term) return;
+  const d = document.createElement('div');
+  d.className = `term-line term-${type}`;
+  const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+  d.textContent = `[${time}] ${line}`;
+  term.appendChild(d);
+  term.scrollTop = term.scrollHeight;
+  while (term.children.length > 25) term.firstChild.remove();
+}
+
+function clearTerm() {
+  const term = document.getElementById('terminal');
+  if (term) term.innerHTML = '';
+  logSerial('Serial monitor buffer flushed.', 'sys');
+}
+
+function updateVisuals() {
+  const mRounded = Math.round(moisture);
+  document.getElementById('oledMoist').textContent = mRounded;
+  document.getElementById('oledTemp').textContent = temp.toFixed(1);
+
+  // Analog probe voltage calculation
+  const v = (3.0 - (moisture / 100) * 1.8).toFixed(2);
+  document.getElementById('voltReading').textContent = v + ' V';
+
+  const rBox = document.getElementById('relayBox');
+  const rLed = document.getElementById('mcuRelayLed');
+  const oledPump = document.getElementById('oledPumpLine');
+
+  if (pumpActive) {
+    rBox.className = 'relay-box active';
+    rBox.textContent = 'RELAY: ON';
+    rLed.className = 'led-circle relay-on';
+    oledPump.textContent = 'PUMP: ON [RUNNING]';
+    oledPump.style.color = '#34d399';
+  } else {
+    rBox.className = 'relay-box';
+    rBox.textContent = 'RELAY: OFF';
+    rLed.className = 'led-circle';
+    oledPump.textContent = 'PUMP: OFF [IDLE]';
+    oledPump.style.color = '#64748b';
+  }
+}
+
+function setRelay(on, reason = 'User') {
+  pumpActive = on;
+  clickSound(on ? 800 : 400);
+  logSerial(`[GPIO 23 -> ${on ? 'HIGH' : 'LOW'}] Relay ${on ? 'Energized (Pump ON)' : 'Opened (Pump OFF)'} (${reason})`, on ? 'pump' : 'sys');
+  updateVisuals();
+}
+
+function sendKey(cmd) {
+  logSerial(`> TX Command: '${cmd}'`, 'sys');
+  if (cmd === 'P') {
+    setRelay(!pumpActive, 'Manual Toggle');
+  } else if (cmd === 'D') {
+    moisture = 18;
+    logSerial('[ADC34] Moisture dropped to 18%. Hysteresis dry threshold tripped (<30%).', 'alert');
+    if (!pumpActive) setRelay(true, 'Automated threshold trigger');
+    updateVisuals();
+  } else if (cmd === 'W') {
+    moisture = 70;
+    logSerial('[ADC34] Moisture satisfied at 70%. Target threshold reached (>=65%).', 'sys');
+    if (pumpActive) setRelay(false, 'Target reached');
+    updateVisuals();
+  }
+}
+
+// Background simulation ticker
+setInterval(() => {
+  if (pumpActive) {
+    moisture = Math.min(100, moisture + 4);
+    if (moisture >= 65) {
+      logSerial('[EVENT] Target moisture 65% satisfied. Shutting off relay.', 'sys');
+      setRelay(false, 'Target saturation reached');
+    }
+  } else {
+    moisture = Math.max(0, moisture - 0.2);
+  }
+  updateVisuals();
+
+  if (Math.random() > 0.6) {
+    logSerial(`{"moisture":${Math.round(moisture)},"temp":${temp.toFixed(1)},"pump":${pumpActive?1:0}}`, 'data');
+  }
+}, 1200);
+
+document.getElementById('toggleRelayBtn').addEventListener('click', () => {
+  setRelay(!pumpActive, 'Test Button');
+});
+
+// Boot messages
+logSerial('ESP-IDF Boot: ESP32-WROOM-32 (Dual-Core 240MHz, 4MB Flash)', 'sys');
+logSerial('I2C Bus Initialized: SSD1306 128x64 (Address: 0x3C)', 'sys');
+logSerial('ADC Channel 6 (GPIO 34) calibrated: 12-bit (0-4095)', 'sys');
+logSerial('Relay GPIO 23 Output Configured [Active LOW]', 'sys');
+updateVisuals();
+</script>
+</body>
+</html>
